@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     AudioManager audioManager;
     Handler taskHandler = new android.os.Handler();
+    Locale locale = new Locale("RU");
 
     TextToSpeech textToSpeech;
     Button buttonStart;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-        Locale locale = new Locale("RU");
+
         textToSpeech = new TextToSpeech(getApplicationContext(), i -> {
             if (i != TextToSpeech.ERROR) {
                 textToSpeech.setLanguage(locale);
@@ -79,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
     private Runnable speaking = new Runnable() {
         @Override
         public void run() {
-            String hour = String.valueOf(Calendar.getInstance().get(Calendar.HOUR));
-            String minute = String.valueOf(Calendar.getInstance().get(Calendar.MINUTE));
+            String hour = String.format(locale, "%02d", Calendar.getInstance().get(Calendar.HOUR));
+            String minute = String.format(locale, "%02d", Calendar.getInstance().get(Calendar.MINUTE));
 
             String toSpeech = hour + ":" + minute;
             textToSpeech.speak(toSpeech, TextToSpeech.QUEUE_FLUSH, null);
