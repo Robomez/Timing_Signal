@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView shower;
 
     int maxVolume, currentVolume;
+    int delay = 300000;
+    boolean isSpeaking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonStart.setOnClickListener(view -> {
+            isSpeaking = true;
             Toast.makeText(getApplicationContext(), "Погнали", Toast.LENGTH_SHORT).show();
             startSpeak();
         });
@@ -65,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
         stopSpeak();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isSpeaking) {
+            shower.setVisibility(View.GONE);
+        }
+    }
+
     private Runnable speaking = new Runnable() {
         @Override
         public void run() {
@@ -74,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             String toSpeech = hour + ":" + minute;
             textToSpeech.speak(toSpeech, TextToSpeech.QUEUE_FLUSH, null);
 
-            taskHandler.postDelayed(speaking, 300000);
+            taskHandler.postDelayed(speaking, delay);
         }
     };
 
@@ -85,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void stopSpeak() {
+        isSpeaking = false;
         shower.setVisibility(View.GONE);
         if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) != currentVolume) {
             audioManager.setStreamVolume(
